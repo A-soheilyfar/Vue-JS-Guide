@@ -810,4 +810,66 @@ Zod پلی بین اعتبارسنجی در زمان اجرا و امنیت تا
 اعتبارسنجی فرم‌های ورودی: قبل از ارسال اطلاعات فرم (مثلاً فرم ثبت‌نام) به سرور، می‌توانید با Zod مطمئن شوید که کاربر تمام فیلدها را با فرمت صحیح (مثلاً ایمیل معتبر، پسورد با طول کافی) پر کرده است.
 
 ایجاد تایپ از روی اسکما: به جای تعریف دستی یک interface یا type در TypeScript و سپس نوشتن یک تابع اعتبارسنجی جداگانه، با Zod هر دو کار را همزمان انجام می‌دهید.
+
+#### مثال عملی با Axios و Vue
+در این مثال، ما با Axios اطلاعات یک کاربر را از یک API می‌گیریم و با Zod آن را اعتبارسنجی می‌کنیم.
+
 </div>
+
+```vue
+<template>
+  <div>
+    <div v-if="error">خطا: {{ error }}</div>
+    <div v-else-if="user">
+      <h1>{{ user.name }}</h1>
+      <p>ایمیل: {{ user.email }}</p>
+      <p>وب‌سایت: {{ user.website }}</p>
+    </div>
+    <div v-else>در حال بارگذاری...</div>
+  </div>
+</template>
+
+<script setup>
+import { ref, onMounted } from 'vue';
+import axios from 'axios';
+import { z } from 'zod'; // ۱. ایمپورت کردن Zod
+
+// ۲. تعریف اسکما (الگو) برای داده کاربر
+const UserSchema = z.object({
+  id: z.number(),
+  name: z.string(),
+  email: z.string().email({ message: "ایمیل نامعتبر است" }),
+  website: z.string().url().optional(), // این فیلد اختیاری است
+});
+
+// ۳. استخراج خودکار تایپ TypeScript از روی اسکما
+// دیگر نیازی به نوشتن دستی interface User نیست!
+const user = ref(null);
+const error = ref(null);
+
+onMounted(async () => {
+  try {
+    const response = await axios.get('https://jsonplaceholder.typicode.com/users/1');
+    
+    // ۴. اعتبارسنجی داده دریافتی با اسکما
+    // اگر داده معتبر نباشد، .parse() یک خطا پرتاب می‌کند
+    const validatedUser = UserSchema.parse(response.data);
+    
+    // حالا با خیال راحت از داده معتبر و تایپ-سیف استفاده می‌کنیم
+    user.value = validatedUser;
+    
+  } catch (e) {
+    if (e instanceof z.ZodError) {
+      // اگر خطا از سمت Zod باشد (داده نامعتبر)
+      error.value = e.errors[0].message; // نمایش اولین پیام خطا
+    } else {
+      // خطاهای دیگر (مثلاً خطای شبکه)
+      error.value = 'امکان دریافت اطلاعات وجود نداشت.';
+    }
+  }
+});
+</script>
+
+```
+
+در این مثال، Zod تضمین می‌کند که داده‌ای که از API می‌آید، قبل از اینکه در اپلیکیشن شما استفاده شود، کاملاً معتبر و مطابق انتظار شماست.
