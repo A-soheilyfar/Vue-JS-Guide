@@ -142,6 +142,21 @@ const appName = ref("My new task manager")
 alert(appName.value)
 ```
 
+#### ref for primitives
+مشابه بالا برای داده های عادی
+#### ref for arrays
+اینحا باید از reactive استفاده کنیم بنابراین به پروژه اضافه میکنیم
+```vue
+script setup>
+import {ref,reactive} from 'vue'
+```
+و سپس برای این آرایه مینویسیم
+‍‍‍```vue
+task = ['a','b','c']
+const task = reactive(['a','b','c'])
+```
+
+سپس دور 
 
 `{{ }} (Text Interpolation)`
 این علامت که به آن "Mustache syntax" هم می‌گویند، ساده‌ترین راه برای نمایش داده‌های واکنش‌گرا در HTML است. به این کار "اتصال داده یک‌طرفه" (One-way data binding) می‌گویند، چون داده فقط از `<script>` به `<template>` می‌رود.
