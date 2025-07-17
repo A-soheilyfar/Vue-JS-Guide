@@ -131,7 +131,16 @@ import {ref} from 'vue'
 const appName = ref("My new task manager")
 ```
 اینجا appName یک رفرنس واکنش‌گرا است. اگر بخواهید در یک تابع جاوااسکریپتی آن را تغییر دهید، باید بنویسید: `appName.value = "New Title".`
+مثال
+```vue
+<script setup>
+import {ref} from 'vue'
+// const appName="My new task manager"
 
+const appName = ref("My new task manager")
+// alert(appName);   did not output the resulst
+alert(appName.value)
+```
 
 
 `{{ }} (Text Interpolation)`
