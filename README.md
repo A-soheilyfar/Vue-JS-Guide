@@ -307,7 +307,7 @@ import Card from './components/Card.vue';
 
 
 
-
+در مسیردهی ها @ به پوشه src اشاره دارد
 ## Vue Router 🚦
 <div dir="rtl">
   
